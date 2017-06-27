@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Devices.Enumeration;
@@ -43,6 +44,11 @@ namespace AppControl
         private const int TALANQUERA_PIN_1 = 21;
         private const int TALANQUERA_PIN_2 = 20;
         private const int TALANQUERA_PIN_3 = 16;
+
+        public static GpioPin pin;//servo motor 
+        public static GpioPinValue pinValue;
+        private static IAsyncAction workItemThread;
+
         private GpioPin pinSem1;
         private GpioPin pinSem2;
         private GpioPin pinSem3;
@@ -235,6 +241,11 @@ namespace AppControl
             //Muestra un error si no hay un controlador GPIO
             if (controller != null)
             {
+                pin = controller.OpenPin(18);
+                pinValue = GpioPinValue.High;
+                pin.Write(pinValue);
+                pin.SetDriveMode(GpioPinDriveMode.Output);
+
 
                 //Se Configura el pin del semaforo 1 led rojo como salida
                 pinSem1 = controller.OpenPin(LED_PIN_SEM1);
@@ -448,5 +459,74 @@ namespace AppControl
                 Debug.WriteLine("Ocurrio una excepción con el evento Serial " + ex.Message);
             }
         }
+
+        public static void PWM_R(int pinNumber)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            workItemThread = Windows.System.Threading.ThreadPool.RunAsync(
+                 (source) =>
+                 {
+                     // setup, ensure pins initialized
+                     ManualResetEvent mre = new ManualResetEvent(false);
+                     mre.WaitOne(1500);
+
+                     ulong pulseTicks = ((ulong)(Stopwatch.Frequency) / 1000) * 2;
+                     ulong delta;
+                     var startTime = stopwatch.ElapsedMilliseconds;
+                     while (stopwatch.ElapsedMilliseconds - startTime <= 300)
+                     {
+                         pin.Write(GpioPinValue.High);
+                         ulong starttick = (ulong)(stopwatch.ElapsedTicks);
+                         while (true)
+                         {
+                             delta = (ulong)(stopwatch.ElapsedTicks) - starttick;
+                             if (delta > pulseTicks) break;
+                         }
+                         pin.Write(GpioPinValue.Low);
+                         starttick = (ulong)(stopwatch.ElapsedTicks);
+                         while (true)
+                         {
+                             delta = (ulong)(stopwatch.ElapsedTicks) - starttick;
+                             if (delta > pulseTicks * 10) break;
+                         }
+                     }
+                 }, WorkItemPriority.High);
+        }
+
+        public static void PWM_L(int pinNumber)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            workItemThread = Windows.System.Threading.ThreadPool.RunAsync(
+                 (source) =>
+                 {
+                     // setup, ensure pins initialized
+                     ManualResetEvent mre = new ManualResetEvent(false);
+                     mre.WaitOne(1500);
+
+                     ulong pulseTicks = ((ulong)(Stopwatch.Frequency) / 1000) * 2;
+                     ulong delta;
+                     var startTime = stopwatch.ElapsedMilliseconds;
+                     while (stopwatch.ElapsedMilliseconds - startTime <= 300)
+                     {
+                         pin.Write(GpioPinValue.High);
+                         ulong starttick = (ulong)(stopwatch.ElapsedTicks);
+                         while (true)
+                         {
+                             delta = starttick - (ulong)(stopwatch.ElapsedTicks);
+                             if (delta > pulseTicks) break;
+                         }
+                         pin.Write(GpioPinValue.Low);
+                         starttick = (ulong)(stopwatch.ElapsedTicks);
+                         while (true)
+                         {
+                             delta = (ulong)(stopwatch.ElapsedTicks) - starttick;
+                             if (delta > pulseTicks * 10) break;
+                         }
+                     }
+                 }, WorkItemPriority.High);
+        }
+
     }
 }
