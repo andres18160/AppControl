@@ -5,44 +5,39 @@
     xmlns:local="using:AppControl"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Loaded="Page_Loaded" Height="611" Width="1021">
+    mc:Ignorable="d" Loaded="Page_Loaded" Height="600" Width="800">
 
     <Page.Resources>
 
     </Page.Resources>
-    <Grid x:Name="gridPrincipal" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,0,10">
+    <Grid x:Name="gridPrincipal" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="1,1,319,327" Height="272" Width="480">
         <Canvas Margin="10,6,10,10">
-            <Image HorizontalAlignment="Left" Height="205" VerticalAlignment="Top" Width="326" Source="Assets/logoCardinalGris.png" Stretch="Fill" Canvas.Left="668" Canvas.Top="370"/>
+            <Image HorizontalAlignment="Left" Height="92" VerticalAlignment="Top" Width="193" Source="Assets/logoCardinalGris.png" Stretch="Fill" Canvas.Left="257" Canvas.Top="156"/>
+            <StackPanel Canvas.Left="10" Canvas.Top="10">
+                <Image x:Name="imgSemaforo1" Height="55" Source="Assets/semaforo-02.png" Margin="1,0,0,0" Width="19"/>
+            </StackPanel>
+            <StackPanel Canvas.Left="33" Canvas.Top="10" Width="24" RenderTransformOrigin="0.26,0.408" >
+                <Image x:Name="imgSemaforo2" Height="55" Width="19" Source="Assets/semaforo-02.png" Margin="3,0,0,0" HorizontalAlignment="Left"/>
+            </StackPanel>
+            <StackPanel Canvas.Left="59" Canvas.Top="10">
+                <Image x:Name="imgSemaforo3" Height="55" Source="Assets/semaforo-02.png" Margin="1,0,0,0" Width="19"/>
+            </StackPanel>
+            <Canvas>
+                <Image x:Name="imgTalanquera1" Height="106" Source="Assets/talanquera-01.png" Width="80" Canvas.Top="79" Canvas.Left="3"/>
+                <Image x:Name="imgTalanquera2" Height="106" Source="Assets/talanquera-01.png" Canvas.Left="174" Canvas.Top="79" Width="80"/>
+                <Image x:Name="imgTalanquera3" Height="106" Source="Assets/talanquera-01.png" Canvas.Left="87"  Canvas.Top="79" Width="80"/>
+            </Canvas>
 
-
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="SEMAFOROS" VerticalAlignment="Top" Height="27" Width="100" Canvas.Left="82" Canvas.Top="19"/>
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="TALANQUERAS" VerticalAlignment="Top" Height="27" Width="144" Canvas.Left="407" Canvas.Top="19"/>
-            <StackPanel Canvas.Left="39" Canvas.Top="59">
-                <Image x:Name="imgSemaforo1" Height="126" Source="Assets/semaforo-02.png" Margin="1,0,0,0"/>
-            </StackPanel>
-            <StackPanel Canvas.Left="104" Canvas.Top="60">
-                <Image x:Name="imgSemaforo2" Height="126" Source="Assets/semaforo-02.png" Margin="1,0,0,0"/>
-            </StackPanel>
-            <StackPanel Canvas.Left="168" Canvas.Top="61">
-                <Image x:Name="imgSemaforo3" Height="126" Source="Assets/semaforo-02.png" Margin="1,0,0,0"/>
-            </StackPanel>
-
-            <StackPanel Canvas.Left="257" Canvas.Top="65" Width="139">
-                <Image x:Name="imgTalanquera1" Height="126" Source="Assets/talanquera-01.png" Margin="-1,0,2,0"/>
-            </StackPanel>
-            <StackPanel Canvas.Left="412" Canvas.Top="66" Width="139">
-                <Image x:Name="imgTalanquera2" Height="126" Source="Assets/talanquera-01.png" Margin="-1,0,2,0"/>
-            </StackPanel>
             <StackPanel Canvas.Left="562" Canvas.Top="66" Width="139">
-                <Image x:Name="imgTalanquera3" Height="126" Source="Assets/talanquera-01.png" Margin="-1,0,2,0"/>
+
             </StackPanel>
-            <StackPanel Canvas.Left="742" Canvas.Top="64" Width="90" Height="119">
-                <Image x:Name="imgLoop1" Height="115" Source="Assets/activo.png" Margin="-1,0,2,0"/>
+            <StackPanel Canvas.Left="84" Canvas.Top="10" Width="40" Height="55">
+                <Image x:Name="imgLoop1" Height="54" Width="40" Source="Assets/activo.png" Margin="-1,0,0,0"/>
             </StackPanel>
-            <StackPanel Canvas.Left="844" Canvas.Top="64" Width="90" Height="119">
-                <Image x:Name="imgLoop2" Height="115" Source="Assets/activo.png" Margin="-1,0,2,0"/>
+            <StackPanel Canvas.Left="124" Width="40" Height="55" Canvas.Top="10">
+                <Image x:Name="imgLoop2" Height="54" Width="40" Source="Assets/activo.png" Margin="-1,0,2,0"/>
             </StackPanel>
-            <TextBox x:Name="txtMensajes" TextWrapping="Wrap" AcceptsReturn="True" Text="" Canvas.Top="262" Width="663" Height="141" Background="White" FontWeight="Bold" Foreground="White" FontFamily="Arial Black" FontSize="12" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <TextBox x:Name="txtMensajes" TextWrapping="Wrap" AcceptsReturn="True" Canvas.Top="156" Width="252" Height="90" Background="White" FontWeight="Bold" Foreground="White" FontFamily="Arial Black" FontSize="12" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="LOOPS" VerticalAlignment="Top" Height="27" Width="144" Canvas.Left="786" Canvas.Top="23"/>
         </Canvas>
 

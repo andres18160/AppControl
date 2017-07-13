@@ -35,19 +35,15 @@ namespace AppControl
     public sealed partial class MainPage : Page
     {
         private SocketServer socket;
-        private const int LED_PIN_SEM1 = 26;
-        private const int LED_PIN_SEM2 = 19;
-        private const int LED_PIN_SEM3 = 13;
-        private const int Led_Pin_Loop1 = 6;
-        private const int Led_Pin_Loop2 = 5;
+        private const int LED_PIN_SEM1 = 21;
+        private const int LED_PIN_SEM2 = 20;
+        private const int LED_PIN_SEM3 = 16;
+        private const int Led_Pin_Loop1 = 12;
+        private const int Led_Pin_Loop2 = 7;
 
-        private const int TALANQUERA_PIN_1 = 21;
-        private const int TALANQUERA_PIN_2 = 20;
-        private const int TALANQUERA_PIN_3 = 16;
-
-        public static GpioPin pin;//servo motor 
-        public static GpioPinValue pinValue;
-        private static IAsyncAction workItemThread;
+        private const int TALANQUERA_PIN_1 = 8;
+        private const int TALANQUERA_PIN_2 = 25;
+        private const int TALANQUERA_PIN_3 = 24;
 
         private GpioPin pinSem1;
         private GpioPin pinSem2;
@@ -59,6 +55,7 @@ namespace AppControl
         private GpioPin pinLoop2;
         private SerialDevice serialPort = null;
         private ConexionSerial serialCon;
+        private static IAsyncAction workItemThread;
 
         public  MainPage()
         {
@@ -163,18 +160,20 @@ namespace AppControl
                 /********************* TALANQUERA 1*****************************/
                 if (pinTalanquera1.Read() == GpioPinValue.Low)
                 {
+                    
                     estadoDispositivos += "0;";
                     imgTalanquera1.Source = new BitmapImage(new Uri("ms-appx:///Assets/talanquera-01.png"));
                 }
                 else
                 {
+  
                     estadoDispositivos += "1;";
                     imgTalanquera1.Source = new BitmapImage(new Uri("ms-appx:///Assets/talanquera-02.png"));
                 }
                     
                 /********************* TALANQUERA 2*****************************/
                 if (pinTalanquera2.Read() == GpioPinValue.Low)
-                {
+                { 
                     estadoDispositivos += "0;";
                     imgTalanquera2.Source = new BitmapImage(new Uri("ms-appx:///Assets/talanquera-01.png"));
                 }
@@ -241,11 +240,6 @@ namespace AppControl
             //Muestra un error si no hay un controlador GPIO
             if (controller != null)
             {
-                pin = controller.OpenPin(18);
-                pinValue = GpioPinValue.High;
-                pin.Write(pinValue);
-                pin.SetDriveMode(GpioPinDriveMode.Output);
-
 
                 //Se Configura el pin del semaforo 1 led rojo como salida
                 pinSem1 = controller.OpenPin(LED_PIN_SEM1);
@@ -302,14 +296,16 @@ namespace AppControl
 
                 verificacionPerifericos();
 
+
+
                 Debug.WriteLine("Pines GPIO inicializados correctamente");
-                txtMensajes.Text += "\n Pines GPIO inicializados correctamente";
+                txtMensajes.Text += "Pines GPIO inicializados correctamente";
 
             }
             else
             {
                 Debug.WriteLine("No hay controlador GPIO en este dispositivo");
-                txtMensajes.Text += "\n No hay controlador GPIO en este dispositivo";
+                txtMensajes.Text += "No hay controlador GPIO en este dispositivo";
             }
         }
 
@@ -374,9 +370,15 @@ namespace AppControl
                 pinTalanquera1.Write(GpioPinValue.Low);
             //Manejo del talarquera 2
             if (perifericos[4] == "1")
+            {
+                //PWM_L(pinTalanquera2);
                 pinTalanquera2.Write(GpioPinValue.High);
-            else
-                pinTalanquera2.Write(GpioPinValue.Low);
+
+            }else{
+               // PWM_R(pinTalanquera2);
+                   pinTalanquera2.Write(GpioPinValue.Low);
+            }
+
             //Manejo del talarquera 3
             if (perifericos[5] == "1")
                 pinTalanquera3.Write(GpioPinValue.High);
@@ -460,7 +462,12 @@ namespace AppControl
             }
         }
 
-        public static void PWM_R(int pinNumber)
+
+        /**
+          METODOS DE CONTROL PARA SERVO MOTOR 
+         **/
+
+        public static void PWM_R(GpioPin pinNumber)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -476,14 +483,14 @@ namespace AppControl
                      var startTime = stopwatch.ElapsedMilliseconds;
                      while (stopwatch.ElapsedMilliseconds - startTime <= 300)
                      {
-                         pin.Write(GpioPinValue.High);
+                         pinNumber.Write(GpioPinValue.High);
                          ulong starttick = (ulong)(stopwatch.ElapsedTicks);
                          while (true)
                          {
                              delta = (ulong)(stopwatch.ElapsedTicks) - starttick;
                              if (delta > pulseTicks) break;
                          }
-                         pin.Write(GpioPinValue.Low);
+                         pinNumber.Write(GpioPinValue.Low);
                          starttick = (ulong)(stopwatch.ElapsedTicks);
                          while (true)
                          {
@@ -494,8 +501,9 @@ namespace AppControl
                  }, WorkItemPriority.High);
         }
 
-        public static void PWM_L(int pinNumber)
+        public static void PWM_L(GpioPin pinNumber)
         {
+
             var stopwatch = Stopwatch.StartNew();
 
             workItemThread = Windows.System.Threading.ThreadPool.RunAsync(
@@ -510,14 +518,14 @@ namespace AppControl
                      var startTime = stopwatch.ElapsedMilliseconds;
                      while (stopwatch.ElapsedMilliseconds - startTime <= 300)
                      {
-                         pin.Write(GpioPinValue.High);
+                         pinNumber.Write(GpioPinValue.High);
                          ulong starttick = (ulong)(stopwatch.ElapsedTicks);
                          while (true)
                          {
                              delta = starttick - (ulong)(stopwatch.ElapsedTicks);
                              if (delta > pulseTicks) break;
                          }
-                         pin.Write(GpioPinValue.Low);
+                         pinNumber.Write(GpioPinValue.Low);
                          starttick = (ulong)(stopwatch.ElapsedTicks);
                          while (true)
                          {
