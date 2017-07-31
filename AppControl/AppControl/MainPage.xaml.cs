@@ -56,6 +56,9 @@ namespace AppControl
         private SerialDevice serialPort = null;
         private ConexionSerial serialCon;
         private static IAsyncAction workItemThread;
+        private bool bonderaTalanquera1 = false;
+        private bool bonderaTalanquera2 = false;
+        private bool bonderaTalanquera3 = false;
 
         public  MainPage()
         {
@@ -294,7 +297,7 @@ namespace AppControl
                 pinLoop1.ValueChanged += pinLoop1_ValueChanged;
                 pinLoop2.ValueChanged += pinLoop2_ValueChanged;
 
-                verificacionPerifericos();
+               // verificacionPerifericos();
 
 
 
@@ -365,13 +368,34 @@ namespace AppControl
                 pinSem3.Write(GpioPinValue.Low);
             //Manejo del talarquera 1 
             if (perifericos[3] == "1")
-                pinTalanquera1.Write(GpioPinValue.High);
+            {
+               
+                if (!bonderaTalanquera1)
+                {
+                    bonderaTalanquera1 = true;
+                    pinTalanquera1.Write(GpioPinValue.High);
+                    Task.Delay(200).Wait();
+                    pinTalanquera1.Write(GpioPinValue.Low);
+                }
+              
+            }
+
             else
-                pinTalanquera1.Write(GpioPinValue.Low);
+            {
+                if (bonderaTalanquera1)
+                {
+                    bonderaTalanquera1 = false;
+                    pinTalanquera1.Write(GpioPinValue.High);
+                    Task.Delay(200).Wait();
+                    pinTalanquera1.Write(GpioPinValue.Low);
+                }
+            }
+        
+
             //Manejo del talarquera 2
             if (perifericos[4] == "1")
             {
-                //PWM_L(pinTalanquera2);
+               // PWM_L(pinTalanquera2);
                 pinTalanquera2.Write(GpioPinValue.High);
 
             }else{
