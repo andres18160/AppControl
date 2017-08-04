@@ -57,6 +57,7 @@ namespace AppControl
         private ConexionSerial serialCon;
         private static IAsyncAction workItemThread;
         private bool bonderaTalanquera1 = false;
+        private bool cierreTalanquera = false;
         private bool bonderaTalanquera2 = false;
         private bool bonderaTalanquera3 = false;
 
@@ -161,7 +162,7 @@ namespace AppControl
                 }
                     
                 /********************* TALANQUERA 1*****************************/
-                if (pinTalanquera1.Read() == GpioPinValue.Low)
+                if (bonderaTalanquera1)
                 {
                     
                     estadoDispositivos += "0;";
@@ -175,7 +176,7 @@ namespace AppControl
                 }
                     
                 /********************* TALANQUERA 2*****************************/
-                if (pinTalanquera2.Read() == GpioPinValue.Low)
+                if (!bonderaTalanquera2)
                 { 
                     estadoDispositivos += "0;";
                     imgTalanquera2.Source = new BitmapImage(new Uri("ms-appx:///Assets/talanquera-01.png"));
@@ -187,7 +188,7 @@ namespace AppControl
                 }
                     
                 /********************* TALANQUERA 3*****************************/
-                if (pinTalanquera3.Read() == GpioPinValue.Low)
+                if (!bonderaTalanquera3)
                 {
                     estadoDispositivos += "0;";
                     imgTalanquera3.Source = new BitmapImage(new Uri("ms-appx:///Assets/talanquera-01.png"));
@@ -314,28 +315,41 @@ namespace AppControl
 
         private void pinLoop1_ValueChanged(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
-            //try
-            //{
-            //    if (pinSem1.Read() == GpioPinValue.Low)
-            //        pinSem1.Write(GpioPinValue.High);
-            //    else
-            //        pinSem1.Write(GpioPinValue.Low);
-            //}
-            //catch (Exception ex)
-            //{
+            try
+            {
+                    if (!bonderaTalanquera2)
+                    {
+                        bonderaTalanquera2 = false;
+                        pinTalanquera2.Write(GpioPinValue.High);
+                        Task.Delay(200).Wait();
+                        pinTalanquera2.Write(GpioPinValue.Low);
+                        pinSem2.Write(GpioPinValue.Low);
+                    }                
 
-            //    Debug.WriteLine("Ocurrio una excepción con el evento boton" + ex);
-            //}
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine("Ocurrio una excepción con el evento boton" + ex);
+            }
         }
 
         private void pinLoop2_ValueChanged(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
             try
             {
-                 if (pinTalanquera2.Read() == GpioPinValue.Low)
+                if (cierreTalanquera)
+                {
+                    bonderaTalanquera2 = false;
                     pinTalanquera2.Write(GpioPinValue.High);
-                else
+                    Task.Delay(200).Wait();
                     pinTalanquera2.Write(GpioPinValue.Low);
+                    pinSem2.Write(GpioPinValue.Low);
+                    cierreTalanquera = false;
+
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -358,9 +372,31 @@ namespace AppControl
                 pinSem1.Write(GpioPinValue.Low);
             //Manejo del semaforo 2
             if (perifericos[1] == "1")
-                pinSem2.Write(GpioPinValue.High);
-            else
-                pinSem2.Write(GpioPinValue.Low);
+             {
+               
+                if (!bonderaTalanquera2)
+                {
+                    pinSem2.Write(GpioPinValue.High);
+                    bonderaTalanquera2 = true;
+                    pinTalanquera2.Write(GpioPinValue.High);
+                    Task.Delay(200).Wait();
+                    pinTalanquera2.Write(GpioPinValue.Low);
+                    cierreTalanquera = true;
+                }
+            }
+            //else
+            //{
+            //    pinSem2.Write(GpioPinValue.Low);
+            //    if (bonderaTalanquera2)
+            //    {
+            //        cierreTalanquera = false;
+            //        bonderaTalanquera2 = false;
+            //        pinTalanquera2.Write(GpioPinValue.High);
+            //        Task.Delay(200).Wait();
+            //        pinTalanquera2.Write(GpioPinValue.Low);
+            //    }
+            //}
+               
             //Manejo del semaforo 3
             if (perifericos[2] == "1")
                 pinSem3.Write(GpioPinValue.High);
@@ -390,18 +426,31 @@ namespace AppControl
                     pinTalanquera1.Write(GpioPinValue.Low);
                 }
             }
-        
+
 
             //Manejo del talarquera 2
-            if (perifericos[4] == "1")
-            {
-               // PWM_L(pinTalanquera2);
-                pinTalanquera2.Write(GpioPinValue.High);
+            //if (perifericos[4] == "1")
+            //{
+            //    // PWM_L(pinTalanquera2);
+            //    if (!bonderaTalanquera2)
+            //    {
+            //        bonderaTalanquera2 = true;
+            //        pinTalanquera2.Write(GpioPinValue.High);
+            //        Task.Delay(200).Wait();
+            //        pinTalanquera2.Write(GpioPinValue.Low);
+            //    }
 
-            }else{
-               // PWM_R(pinTalanquera2);
-                   pinTalanquera2.Write(GpioPinValue.Low);
-            }
+            //}
+            //else
+            //{
+            //    if (bonderaTalanquera2)
+            //    {
+            //        bonderaTalanquera2 = false;
+            //        pinTalanquera2.Write(GpioPinValue.High);
+            //        Task.Delay(200).Wait();
+            //        pinTalanquera2.Write(GpioPinValue.Low);
+            //    }
+            //}
 
             //Manejo del talarquera 3
             if (perifericos[5] == "1")
@@ -422,23 +471,23 @@ namespace AppControl
 
         private void verificacionPerifericos()
         {
-            for (int i = 0; i < 3; i++)
-            {
-                pinSem1.Write(GpioPinValue.High);
-                pinSem2.Write(GpioPinValue.High);
-                pinSem3.Write(GpioPinValue.High);
-                pinTalanquera1.Write(GpioPinValue.High);
-                pinTalanquera2.Write(GpioPinValue.High);
-                pinTalanquera3.Write(GpioPinValue.High);
-                Task.Delay(100).Wait();
-                pinSem1.Write(GpioPinValue.Low);
-                pinSem2.Write(GpioPinValue.Low);
-                pinSem3.Write(GpioPinValue.Low);
-                pinTalanquera1.Write(GpioPinValue.Low);
-                pinTalanquera2.Write(GpioPinValue.Low);
-                pinTalanquera3.Write(GpioPinValue.Low);
-                Task.Delay(100).Wait();
-            }
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    pinSem1.Write(GpioPinValue.High);
+            //    pinSem2.Write(GpioPinValue.High);
+            //    pinSem3.Write(GpioPinValue.High);
+            //    pinTalanquera1.Write(GpioPinValue.High);
+            //    pinTalanquera2.Write(GpioPinValue.High);
+            //    pinTalanquera3.Write(GpioPinValue.High);
+            ////    Task.Delay(100).Wait();
+            //pinSem1.Write(GpioPinValue.Low);
+            //pinSem2.Write(GpioPinValue.Low);
+            //pinSem3.Write(GpioPinValue.Low);
+            pinTalanquera1.Write(GpioPinValue.Low);
+            pinTalanquera2.Write(GpioPinValue.Low);
+            pinTalanquera3.Write(GpioPinValue.Low);
+            //    Task.Delay(100).Wait();
+            //}
 
         }
 
