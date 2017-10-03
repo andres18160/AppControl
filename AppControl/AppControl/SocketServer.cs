@@ -20,7 +20,7 @@ namespace AppControl
         public delegate void Error(string message);
         public event Error OnError;
         public bool status { get; set; }
-        DatagramSocket listenerSocket = null;
+      //  DatagramSocket listenerSocket = null;
         public SocketServer(int port)
         {
             _port = port;
