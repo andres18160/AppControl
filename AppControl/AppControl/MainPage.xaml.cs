@@ -452,7 +452,6 @@ namespace AppControl
                     pinTalanquera1.Write(GpioPinValue.High);
                     Task.Delay(200).Wait();
                     pinTalanquera1.Write(GpioPinValue.Low);
-
                 }
             }
 
@@ -461,8 +460,10 @@ namespace AppControl
             {
                 if (!bonderaTalanquera3)
                 {
+                    bonderaTalanquera2 = false;
                     bonderaTalanquera3 = true;
                     cierreTalanquera3 = true;
+                    cierreTalanquera2 = false;
                     pinSem3.Write(GpioPinValue.High);
                     pinTalanquera3.Write(GpioPinValue.High);
                     pinTalanquera2.Write(GpioPinValue.High);
@@ -485,6 +486,8 @@ namespace AppControl
                     pinTalanquera2.Write(GpioPinValue.Low);
                     cierreTalanquera3 = false;
                     bonderaTalanquera3 = false;
+                    bonderaTalanquera2 = true;
+                    cierreTalanquera2 = true;
                 }
             }
 
@@ -515,28 +518,28 @@ namespace AppControl
 
 
             //Manejo del talarquera 2
-            //if (perifericos[4] == "1")
-            //{
-            //    // PWM_L(pinTalanquera2);
-            //    if (!bonderaTalanquera2)
-            //    {
-            //        bonderaTalanquera2 = true;
-            //        pinTalanquera2.Write(GpioPinValue.High);
-            //        Task.Delay(200).Wait();
-            //        pinTalanquera2.Write(GpioPinValue.Low);
-            //    }
+            if (perifericos[4] == "1")
+            {
+                // PWM_L(pinTalanquera2);
+                if (!bonderaTalanquera2)
+                {
+                    bonderaTalanquera2 = true;
+                    pinTalanquera2.Write(GpioPinValue.High);
+                    Task.Delay(200).Wait();
+                    pinTalanquera2.Write(GpioPinValue.Low);
+                }
 
-            //}
-            //else
-            //{
-            //    if (bonderaTalanquera2)
-            //    {
-            //        bonderaTalanquera2 = false;
-            //        pinTalanquera2.Write(GpioPinValue.High);
-            //        Task.Delay(200).Wait();
-            //        pinTalanquera2.Write(GpioPinValue.Low);
-            //    }
-            //}
+            }
+            else
+            {
+                if (bonderaTalanquera2)
+                {
+                    bonderaTalanquera2 = false;
+                    pinTalanquera2.Write(GpioPinValue.High);
+                    Task.Delay(200).Wait();
+                    pinTalanquera2.Write(GpioPinValue.Low);
+                }
+            }
 
             //Manejo del talarquera 3
             //if (perifericos[5] == "1")
